@@ -1,0 +1,72 @@
+@startuml PowerGridGraph
+skinparam dpi 216
+!include https://raw.githubusercontent.com/ptrkcsk/one-dark-plantuml-theme/v1.0.1/theme.puml
+skinparam TitleBorderRoundCorner 10
+skinparam TitleBorderColor DarkGrey
+skinparam TitleBorderThickness  2
+skinparam TitleFontSize 30
+skinparam TitleFontColor AliceBlue
+skinparam TitleBackgroundColor DarkSlateGrey
+' skinparam linetype ortho
+skinparam linetype polyline
+' #define EDGE std::tuple<int, int, int> // EDGE is a tuple (station1_id, station2_id, cost)
+' #define RELATION std::tuple<int, int> // RELATION is a tuple (other_station_id, cost)
+interface GLOBALS{
+    EDGE -> std::tuple<int, int, int> 
+    RELATION -> std::tuple<int, int>
+    LEFT(x)
+    RIGHT(x)
+    PARENT(x)
+}
+
+class PowerGridGraph{
+    __private__
+    -std::vector<std::RELATION> *adj_list; 
+    -int outer_array_size;
+    -int num_edges;
+    -int valid_mst_starter_index_{0};
+    -std::vector<std::EDGE> generateMST();
+    -class EdgesPriorityQueue (see below for the nested class)
+    __public__
+    +PowerGridGraph() <<constructor>>
+    +PowerGridGraph(int num_vertices) <<constructor>>
+    +~PowerGridGraph() <<destructor>>
+    +void load(std::string filename)
+    +bool insertConnection(int station1_id, int station2_id, int cost)
+    +bool removeStation(int station_id)
+    +bool printConnectedStations(int station_id)
+    +bool printPrimMST()
+    +int summateMSTCost()
+    +int getWeight(int station1_id, int station2_id)
+    +int getNumberOfEdges()
+}
+
+
+class EdgesPriorityQueue{
+    __private__
+    -std::EDGE *heap_;
+    -int back_{0};
+    -int size_;
+    -void minHeapify(int i);
+    __public__
+    +EdgesPriorityQueue(int size) <<constructor>>
+    +~EdgesPriorityQueue() <<destructor>>
+    +void insert(int node1, int node2, int weight)
+    +std::EDGE extractMinimumFromTop()
+    +void print()
+    +bool isEmpty()
+
+}
+class IllegalException {
+    __private__
+    -std::string message_{"illegal argument"};
+    __public__
+    +IllegalException(std::string message) <<constructor>>
+    +IllegalException() <<constructor>>
+    +const char *what() const noexcept override{return message_.c_str();
+}
+
+PowerGridGraph -right-> EdgesPriorityQueue : uses for MST,\n  hence \n  1 to 1 relationship
+PowerGridGraph-left-*IllegalException : PowerGridGraph \n throws \n IllegalException 
+GLOBALS -[hidden]down-- PowerGridGraph
+@enduml

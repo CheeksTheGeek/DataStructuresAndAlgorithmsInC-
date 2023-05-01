@@ -1,0 +1,144 @@
+@startuml PageTable
+
+skinparam dpi 216
+!include https://raw.githubusercontent.com/ptrkcsk/one-dark-plantuml-theme/v1.0.1/theme.puml
+skinparam TitleBorderRoundCorner 10
+skinparam TitleBorderColor DarkGrey
+skinparam TitleBorderThickness  2
+skinparam TitleFontSize 30
+skinparam TitleFontColor AliceBlue
+skinparam TitleBackgroundColor DarkSlateGrey
+' skinparam linetype ortho
+skinparam linetype polyline
+
+title "Hashed Page Table Implementation With Ordered \n Separate Chaining And Open Addressing Via Double Hashing"
+' legend bottom right 
+'     "GLOBAL VALUES"
+'     NULL_MSTART : UINT_MAX
+'     EMPTY_PID : UINT_MAX
+'     TOMBSTONE_PID : UINT_MAX - 1
+' endlegend
+entity "GLOBAL VALUES" as global{
+    +NULL_MSTART : UINT_MAX
+    +EMPTY_PID : UINT_MAX
+    +TOMBSTONE_PID : UINT_MAX - 1 
+} 
+
+class Process{
+    __private__
+    -PID_ : unsigned int
+    -memory_start_ : unsigned int
+    __public__
+    +Process() <<default constructor>>
+    +Process(int PID, 
+        int memory_start) <<constructor>>
+    +~Process() <<destructor>>
+    +getPID() : unsigned int
+    +setPID() : void
+    +getMemoryStart() : unsigned int
+    +setMemoryStart() : void
+}
+class DynamicArrayForProcess{
+    __private__
+    -*dynamic_array_ : Process[]
+    -*capacity_ : unsigned int
+    -*size_ : unsigned int
+    __public__
+    +DynamicArrayForProcess() <<constructor>>
+    +DynamicArrayForProcess(
+            int capacity) <<constructor>>
+    +~DynamicArrayForProcess() <<destructor>>
+    +[](int index) : &Process <<operator overload>>
+    +at(int index) : &Process <<operator overload>>
+    +getSize() : unsigned int
+    +insert(unsigned int index, Process value) : void
+    +erase(int index) : void
+}
+
+abstract class HashPageTable{
+    __protected__
+    #*physical_memory_ : int[]
+    #*page_activity_ : unsigned int[]
+    #memory_counter_ : unsigned int
+    #next_available_page_ : unsigned int
+    #number_of_pages_in_memory_ : unsigned int
+    #memory_size_ : unsigned int
+    #page_size_ : unsigned int
+    #table_size_ : unsigned int
+    __public__
+    +HashPageTable() <<constructor>>
+    +HashPageTable(unsigned int memory_size, 
+        unsigned int page_size) <<constructor>>
+    +~HashPageTable() <<destructor>> <<virtual>>
+    +primaryHashFunction(unsigned int PID) : unsigned int
+    +isPhysicalMemoryFull() : bool
+    +writeValueToPMemory(unsigned int physical_address, int value) : void
+    +isAddressInPageScope(unsigned int virtual_address) : bool
+    +updateNextAvailablePage() : void
+    +findPhysicalIndex(unsigned int PID) : int
+    +isTableFull() : bool <<abstract>>
+    +isPIDInTable(unsigned int PID) : bool <<abstract>>
+    +insertProcess(unsigned int PID) : void <<abstract>>
+    +writeValue(unsigned int PID, 
+            unsigned int virtual_address, int value) : void <<abstract>>
+    +readValue(unsigned int PID, 
+            unsigned int virtual_address) : int <<abstract>>
+    +deletePID(unsigned int PID) : void <<abstract>>
+    +printTable() : void <<abstract>>
+}
+
+class OpenAddressedTable{
+    __private__
+    -*table_ : Process[]
+    __public__
+    +OpenAddressedTable() <<constructor>>
+    +OpenAddressedTable(unsigned int memory_size, 
+        unsigned int page_size) <<constructor>>
+    +~OpenAddressedTable() <<destructor>>
+    +secondaryHashFunctionWithCounter(unsigned int PID, 
+        unsigned int counter) : unsigned int
+    +getIndexForInsertionOrAccession(bool search_for_empty_slot_or_process, 
+        unsigned int PID) : int
+    +isTableFull() : bool <<override>>
+    +isPIDInTable(unsigned int PID) : bool <<override>>
+    +insertProcess(unsigned int PID) : void <<override>>
+    +writeValue(unsigned int PID, 
+        unsigned int virtual_address, int value) : void <<override>>
+    +readValue(unsigned int PID, 
+        unsigned int virtual_address) : int <<override>>
+    +deleteProcess(unsigned int PID) : void <<override>>
+    +printTable() : void <<override>>
+}
+
+class SeparateChainedTable{
+    __private__
+    -*table_ : DynamicArrayForProcess[] 
+    __public__
+    +SeparateChainedTable() <<default constructor>>
+    +SeparateChainedTable(unsigned int memory_size, 
+        unsigned int page_size) <<value-init constructor>>
+    +~SeparateChainedTable() <<destructor>>
+    +getChainIndexForInsertionOrAccession(bool search_for_required_position_or_process, 
+        unsigned int PID) : int
+    +isChainFull(unsigned int indexInPageTable) : bool
+    +isChainEmpty(unsigned int indexInPageTable) : bool
+    +isTableFull() : bool <<override>>
+    +isProcessInTable(unsigned int PID) : bool <<override>>
+    +insertProcess(unsigned int PID) : void <<override>>
+    +writeValue(unsigned int PID, 
+        unsigned int virtual_address, int value) : void <<override>>
+    +readValue(unsigned int PID, 
+        unsigned int virtual_address) : int <<override>>
+    +deleteProcess(unsigned int PID) : void <<override>>
+    +printChain(unsigned int indexInPageTable) : void
+    +printTable() : void <<override>>
+}
+
+HashPageTable "1"<|-l-"1"  OpenAddressedTable: Inherit
+HashPageTable  "1"<|-l- "1" SeparateChainedTable: Inherit
+SeparateChainedTable "n" *-- "1" DynamicArrayForProcess: Composite
+DynamicArrayForProcess "n" *-l- "1" Process: Composite
+OpenAddressedTable "n" *-d-  "1" Process: Composite
+global  -u[hidden]- HashPageTable
+
+@enduml

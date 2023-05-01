@@ -1,0 +1,76 @@
+@startuml Calculator
+skinparam dpi 200
+!include https://raw.githubusercontent.com/ptrkcsk/one-dark-plantuml-theme/v1.0.1/theme.puml
+skinparam TitleBorderRoundCorner 10
+skinparam TitleBorderColor DarkGrey
+skinparam TitleBorderThickness  2
+skinparam TitleFontSize 30
+skinparam TitleFontColor AliceBlue
+skinparam TitleBackgroundColor DarkSlateGrey
+skinparam linetype ortho
+skinparam linetype polyline
+title Calculator
+
+
+interface INTERFACE{
+    +CRTsdnlndksndknk
+    +DEF
+    +PRT
+    +ADDknskndkskdnsk
+    +ADDknskndkskdnsk
+    +ADDknskndkskdnsk
+    +ADDknskndkskdnsk
+    +ADDknskndkskdnsk
+    +ADDknskndkskdnsk
+    +SUB
+    +REM
+    +PRT
+}
+
+
+class VarDataNode{
+    __private__
+    -var_name_ : std::string
+    -value_ : double
+    -p_next_node_ : VarDataNode*
+    __public__
+    +VarDataNode(std::string var_name, double value)
+    +~VarDataNode()
+    +setValue(double value) : void
+    +getVarName() : std::string
+    +getValue() : double
+    +setNext(VarDataNode* next) : void
+    +getNext() : VarDataNode*
+}
+class CalcLinkedList{
+    __private__
+    -p_head_ : VarDataNode*
+    -number_of_nodes_ : unsigned int
+    -list_size_ : unsigned int
+    -redefineVariable(std::string var_name, 
+    double new_value) : void
+
+    __public__
+    +CalcLinkedList()
+    +CalcLinkedList(double size)
+    +~CalcLinkedList()
+    +isFull() : bool
+    +findNodeOrBeforeThis(std::string var_name, 
+    bool this_or_before) : VarDataNode*
+    +nodeExists(std::string var_name) : bool
+    +addNewNode(std::string var_name,
+    double value) : void
+    +removeNode(std::string var_name) : void
+    +printValue(std::string var_name) : void
+    +addSubOp(std::string first_var_name, 
+    std::string second_var_name, 
+    std::string result_var_name, 
+    bool add_or_sub) : void
+    +printLinkedList() : void
+}
+
+INTERFACE-r->CalcLinkedList: main function calls \n appropriate functions \n according to need
+CalcLinkedList "1" *-r-> "n" VarDataNode: contains multiple VarDataNode \n objects  hence a \n one to many relationship
+
+
+@enduml

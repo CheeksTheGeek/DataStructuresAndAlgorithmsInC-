@@ -1,0 +1,2 @@
+all: main.cpp HashPageTable.cpp OpenAddressedTable.cpp SeparateChainedTable.cpp DynamicArrayForProcess.cpp
+	g++ -std=c++11 -O3 main.cpp HashPageTable.cpp OpenAddressedTable.cpp SeparateChainedTable.cpp DynamicArrayForProcess.cpp

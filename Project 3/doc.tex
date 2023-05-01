@@ -1,0 +1,168 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{draculatheme}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{nopageno}
+\usepackage{fontawesome}
+\usepackage{listings}
+\usepackage[export]{adjustbox}
+\usepackage[fontsize=8pt]{fontsize}
+
+\usepackage[a4paper, total={7.8in, 11.5in}]{geometry}
+\graphicspath{ {./images/} }
+\title{Project 3 Submission}
+\author{Chaitanya Sharma}
+\date{March 2023}
+
+\makeatletter
+\renewenvironment{abstract}{%
+    \if@twocolumn
+      \section*{\abstractname}%
+    \else 
+      \begin{center}%
+        {\bfseries \Large\abstractname\vspace{\z@}}
+      \end{center}%
+      \quotation
+    \fi}
+    {\if@twocolumn\else\endquotation\fi}
+\makeatother
+\begin{document}
+
+
+\begin{center}
+	\begin{abstract}
+		This is the design document of Chaitanya Sharma for Project 3 for ECE 250's Winter 2023 offering.
+	\end{abstract}
+\end{center}
+
+\section{Introduction}
+My program consists of a major class {\color{draculapurple}Trie}, and two nested classes inside that ,namely {\color{draculapurple}Node} and
+	{\color{draculapurple}NASIS}.
+	While the {\color{draculapurple}Trie} class is an aggregate of the {\color{draculapurple}Node} class, the {\color{draculapurple}NASIS} class is a helper {\textbf{information}} class which allows me to create a single search function for insertion and deletion of nodes.
+Also, I've created a {\color{draculayellow}trietest.cpp} file to contain the driver code which runs a while loop to parse inputs. There is also an excetion class called {\color{draculapurple}IllegalException} which I've inherited from the {\color{draculapurple}std::exception} class.
+I attribute the latex template which I've used for this design document to myself as I've used it in the past for my other projects in this course.
+\newline I've tested all edge test cases possible and also used the test cases provided by the
+jekelautograder on {\color{DarkPastelBlue}https://github.com/JZJisawesome/ece250-testcases}.
+\newline
+\includegraphics[scale=0.145, center]{PrefixTrie.png}
+\section{Class Structure}
+
+\subsection{{\color{orange}class} {\Large{\color{draculapurple}IllegalException}}}
+I'm using a default constructor and a parameterized constructor for this class. Though I'm not using the parameterized constructor in my code, I've included it for future use.
+This is a simple exception class which I've inherited from the {\color{draculapurple}std::exception} class. 
+It has a private member variable {\color{Turquoise}message\_} which is a string which stores the message to be 
+displayed when the exception is thrown. It has a constructor which takes a string as an argument and assigns it 
+to the {\color{Turquoise}message\_} variable. It also has a default constructor which assigns the default 
+message to the {\color{Turquoise}message\_} variable. It has a {\color{draculapurple}what()} function which returns 
+the {\color{Turquoise}message\_} variable as a {\color{draculapurple}const char*}.
+
+\subsection{{\color{orange}class} {\Large{\color{draculapurple}Trie}}}
+The {\color{draculapurple}constructor} for this class just initializes the {\color{draculapurple}root\_} pointer and the {\color{draculapurple}num\_of\_words\_} variable to 
+{\color{draculapurple}nullptr} and {\color{draculapurple}0} respectively. The {\color{draculapurple}destructor} for this class just deletes the {\color{draculapurple}root\_} pointer, which indirectly deletes all the nodes in the trie.
+This is the major and the only top level class in my whole code. The most important member object of this class is a {\color{draculapurple}root\_} of 
+type {\color{draculapurple}Node} which is a pointer to the root node of the trie. And the only other member object is a {\color{draculapurple}num\_of\_words\_} 
+which is an integer which stores the number of words in the trie.
+
+\subsubsection{{\color{orange}class} {\color{draculapurple}Node} (private nested class)}
+This is a private nested class inside {\color{draculapurple}Trie} class. A simple class which has a static array of 26 pointers to other nodes i.e. its {\color{Turquoise}children}, initialized to nullptr, has a {\color{Turquoise}parent} pointer, 
+an inherent {\color{Turquoise}character value}, a {\color{Turquoise}lineage} which contains a string of all nodes from root node to itself, and a boolean variable which 
+tells whether the node is a {\color{Turquoise}word ending} node or not.
+It's {\color{draculapurple}destructor} is created such that it deletes all the nodes which are children of itself, and then deletes itself.
+
+\subsubsection{{\color{orange}class} {\color{draculapurple}NASIS} (stands for {\color{draculapurple}N}ode {\color{draculapurple}A}nd {\color{draculapurple}S}tring {\color{draculapurple}I}ndex for {\color{draculapurple}S}earching)  (private nested class)\newline
+\faStar~~{\color{Awesome}a special feature of my code}~~\faStar}
+This is a quintessential but convenient helper class which I've created to help me with the search function. 
+It has 4 member objects, namely {\color{draculapurple}last\_active\_node\_}, {\color{draculapurple}last\_important\_node\_}, {\color{draculapurple}string\_index\_} and {\color{draculapurple}original\_word\_}.	
+The reason I implemented this is because traversal in trees is extremely common, as well as expensive, hence it should make sense to make a single function for traversing the prefix trie, 
+I had the same idea for the Linked List project as well as for the Hash Table Project, but they were both linear structures(in the sense of the base structure), but this project is not, 
+hence we need more information to be returned, since I would always use a word to find the appropriate node for mutation and accession, I have the string index, which returns the 
+character at the last valid node when traversing in the path of the word. {\color{draculapurple}last\_important\_node\_} which either has more than one child, 
+or is a word ending node before traversing to the possible {\color{draculapurple}last\_active\_node\_}, which is the last possible node with the same 
+{\color{draculapurple}lineage\_} as the word, and the {\color{draculapurple}original\_word\_} which is the word itself. 
+More info in the search function subsubsection. 
+
+\subsubsection{{\color{orange}NASIS} {\color{draculapurple}search}({\color{orange} std::string} word) {\color{GoldenYellow} const}}
+This function is aimed at reducing redundant traversals in my code, and handles the search for a word operation in the Trie. 
+It takes in a {\color{orange}std::string} word, and from the root, traverses the trie parallel to what character appears in an increasing index value in the word.
+Along the way, if it observes any node with more than one child, or a word ending node, it rewrites the pointer node in {\color{draculapurple}last\_important\_node\_}. 
+If it sees that there is no child node for the current character, it returns the {\color{draculapurple}NASIS} object with the {\color{draculapurple}last\_active\_node\_} 
+as the last node which has the same {\color{draculapurple}lineage\_} as the word, and the {\color{draculapurple}string\_index\_} as the index of the last character 
+in the word which is valid. The information aims to make a single function for traversing the trie, and then using the information to perform the required operation.
+This function runs in {\color{lightblue}O(n)} where {\color{lightblue}n} is the number of characters in the word.
+
+\subsubsection{{\color{orange}void} {\color{draculapurple}load}({\color{orange} std::string} filename)}
+This function uses the C++ standard library {\color{orange}std::ifstream} class to read the file and load the words into the trie using the {\color{draculapurple}insert} function repeatedly on the appearing words.
+This function outputs {\color{green}success} no matter what. This function runs in {\color{lightblue}O(n)} where {\color{lightblue}N} where N is the number of words in the file 
+though it is directly dependant on the number of words, but since it callse the {\color{draculapurple}insert} function which runs in {\color{lightblue}O(n)} where {\color{lightblue}n} 
+is the number of characters in the word, the time complexity is the same.
+{\color{GoldenYellow} "load"}
+
+\subsubsection{{\color{orange}bool} {\color{draculapurple}insert}({\color{orange} std::string} word)}
+This function inserts a word into the trie, it uses the {\color{draculapurple}search} function to get the appropriate information from the NASIS object, 
+then, if the {\color{draculapurple}string\_index\_} is equal to the length of the word, it checks if the {\color{draculapurple}last\_active\_node\_} 
+is a word ending node, if it is, it returns false, otherwise, it sets the {\color{draculapurple}is\_word\_here\_} boolean to true, and increments the 
+number of words in the trie, and returns true. If the {\color{draculapurple}string\_index\_} is not equal to the length of the word, it gets the substring
+ of the word from the {\color{draculapurple}string\_index\_} to the end, and then traverses the trie from the {\color{draculapurple}last\_active\_node\_} 
+ and creates new nodes for each character in the substring, and then sets the {\color{draculapurple}is\_word\_here\_} boolean to true, and increments the
+  number of words in the trie, and returns true. This function runs in {\color{lightblue}O(n)} where {\color{lightblue}n} is the number of characters in the word.
+  Also, this function, if comes across a character outside the range of capital english alphabets, it throws an exception of type {\color{orange}IllegalException}.
+  {\color{GoldenYellow} "i"}
+
+\subsubsection{{\color{orange}int} {\color{draculapurple}countSuffixes}({\color{orange} std::string} word) {\color{GoldenYellow} const} And {\color{orange}int} {\color{draculapurple}countWordsBelowThisNode}({\color{orange} Node} *node) {\color{GoldenYellow} const}}
+The function {\color{draculapurple}countSuffixes}  counts the number of suffixes of a word in the trie, first it traverses the trie parallel to the word, and if it 
+finds a node with no child for the current character, it returns false. Otherwise it completes the loop, and then uses the 
+{\color{draculapurple}countWordsBelowThisNode} function to count the number of words below the last active node, which is the 
+last node with the same lineage as the word. This function runs in {\color{lightblue}O(N)} where {\color{lightblue}N} is the 
+number of characters in the word. The reason this function runs in {\color{lightblue}O(N)} and not {\color{lightblue}O(n)} (where n is the number of characters in the word) is because the average word in the English language has between 4-7 characters, and even if we assume that the word has 1000 characters, which situation is very unlikely, {\color{lightblue}O(1000N)} is still {\color{lightblue}O(N)}. Also, it can be safely assumed that M, the maximum characters in a word, $M<<N$ and that the number of characters in the trie are a constant multiple of the number of words.
+The function {\color{draculapurple}countWordsBelowThisNode} counts the number of words below a node, it uses recursion to traverse the trie, and if it finds a word ending node, it increments the count, and then returns the count. This function runs in {\color{lightblue}O(N)} where {\color{lightblue}N} is the number of words in the trie.
+Also, this function, if comes across a character outside the range of capital english alphabets, it throws an exception of type {\color{orange}IllegalException}.
+{\color{GoldenYellow} "c"}
+
+\subsubsection{{\color{orange}bool} {\color{draculapurple}deleteWord}({\color{orange} std::string} word)}
+This function removes a word from the trie, by considering all three cases (1) the word doesn't exist, (2) the word exists but has other suffixes, and (3) the word exists and has no other suffixes. 
+First, it uses the {\color{draculapurple}search} function to get the appropriate information from the NASIS object, then it checks if the {\color{draculapurple}string\_index\_} 
+is equal to the length of the word, if it is, it checks if the {\color{draculapurple}last\_active\_node\_} is a word ending node and that it has children, 
+if it is, it sets the {\color{draculapurple}is\_word\_here\_} boolean to false, and decrements the number of words in the trie, and returns true. If the {\color{draculapurple}string\_index\_} 
+is not equal to the length of the word, it returns false. If the {\color{draculapurple}last\_active\_node\_} is a word ending node, it checks if all children of the 
+{\color{draculapurple}last\_active\_node\_} are null, if they are, it deletes the children, and then traverses the trie from the {\color{draculapurple}last\_active\_node\_} 
+to the {\color{draculapurple}last\_important\_node\_}  , and deletes the nodes that have no children, and returns true. Otherwise, it returns true. This function runs in 
+{\color{lightblue}O(n)} where {\color{lightblue}n} is the number of characters in the word, since it is directly proportional to the number of characters in the word.
+Also, this function, if comes across a character outside the range of capital english alphabets, it throws an exception of type {\color{orange}IllegalException}.
+{\color{GoldenYellow}"e"}
+
+\subsubsection{{\color{orange}void} {\color{draculapurple}printTrieBelowThisNode}({\color{orange} Node} *node) {\color{GoldenYellow} const}}
+This function prints the trie below a node, it uses recursion to traverse the trie, and if it finds a word ending node, it prints the lineage of the node, and then returns. This function runs in {\color{lightblue}O(N)} where {\color{lightblue}N} is the number of words in the trie.
+It traverses the trie in a Depth First manner, and prints the words in the trie in alphabetical order.
+{\color{GoldenYellow}"print"}
+
+\subsubsection{{\color{orange}void} {\color{draculapurple}printTrie}()} 
+This funciton just calls the {\color{draculapurple}printTrieBelowThisNode} function, and prints a new line if the trie is not empty. This function runs in {\color{lightblue}O(N)} where {\color{lightblue}N} is the number of words in the trie, since it just calls the {\color{draculapurple}printTrieBelowThisNode} function.
+{\color{GoldenYellow}"print"}
+
+\subsubsection{{\color{orange}bool} {\color{draculapurple}checkSpelling}({\color{orange} std::string} word) {\color{GoldenYellow} const}}
+This function checks if a word is spelled correctly, it uses the {\color{draculapurple}search} function to get the appropriate information from the NASIS object, then it checks if the {\color{draculapurple}string\_index\_}
+There are three cases to consider, (1) The word exists fully, (2) the word exists partially i.e. a subsequence exists but is not a word. (3) the word does not exist at all i.e. even the root doesn't have the first character of the word.
+In case (1) it returns true simply, in case(2) it gets the last valid node, and then checks if the last valid node has more than one child, if it does, it calls the {\color{draculapurple}possibleWordsBelow} function, and returns false. In case(3) it simply returns false.
+This function runs in {\color{lightblue}O(N)} since it is directly dependant on the length of the word which as we proved before has is at most {\color{lightblue}N}.
+{\color{GoldenYellow}"spellcheck"}
+
+\subsubsection{{\color{orange}void} {\color{draculapurple}possibleWordsBelow}({\color{orange} Node} *node) {\color{GoldenYellow} const}}
+This function prints all the possible words below a node, it uses recursion to traverse the trie, and if it finds a word ending node, it prints the lineage of the node, and then returns. 
+This function just calls the {\color{draculapurple}printTrieBelowThisNode} function on all the children of the given node. This function runs in {\color{lightblue}O(N)} where {\color{lightblue}N} is the number of words in the trie, since it just calls the {\color{draculapurple}printTrieBelowThisNode} function.
+{\color{GoldenYellow}"spellcheck"}
+
+\subsubsection{{\color{orange}void} {\color{draculapurple}clear}()}
+This function clears the trie, it deletes the root node, and creates a new root node, and sets the number of words to 0. This function runs in {\color{lightblue}O(N)} since it just deletes the root node which subsequently deletes all the nodes in the trie.
+{\color{GoldenYellow}"clear"}
+
+\subsubsection{{\color{orange}bool} {\color{draculapurple}isEmpty}() {\color{GoldenYellow} const}}
+This function returns true if the trie is empty, and false otherwise. This function runs in {\color{lightblue}O(1)} since it just checks a single variable.
+{\color{GoldenYellow}"empty"}
+
+\subsubsection{{\color{orange}int} {\color{draculapurple}getNumOfWords}() {\color{GoldenYellow} const}}
+This function returns the number of words in the trie. This function runs in {\color{lightblue}O(1)} since it just returns a single variable.
+{\color{GoldenYellow}"size"}
+
+
+\end{document}

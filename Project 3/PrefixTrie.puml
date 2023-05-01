@@ -1,0 +1,70 @@
+@startuml PrefixTrie
+skinparam dpi 216
+!include https://raw.githubusercontent.com/ptrkcsk/one-dark-plantuml-theme/v1.0.1/theme.puml
+skinparam TitleBorderRoundCorner 10
+skinparam TitleBorderColor DarkGrey
+skinparam TitleBorderThickness  2
+skinparam TitleFontSize 30
+skinparam TitleFontColor AliceBlue
+skinparam TitleBackgroundColor DarkSlateGrey
+' skinparam linetype ortho
+skinparam linetype polyline
+
+title "Prefix Tree(Trie) implementation in C++"
+
+class Trie{
+    __private__
+    -struct Node
+    -Node* root;
+    -int num_of_words_;
+    -struct NASIS
+    -NASIS search(std::string &word) const;
+    __public__
+    +Trie()
+    +~Trie()
+    +void load(std::string &filename)
+    +bool insertWord(std::string &word)
+    +int countSuffixes(std::string &word) const
+    +bool deleteWord(std::string &word)
+    +void printTrie() const
+    +void printTrieBelowThisNode(Node *node) const
+    +bool checkSpelling(std::string &word) const
+    +void possibleWordsBelow(Node *last_valid_node) const
+    +int getNumOfWords() const
+    +bool isEmpty() const
+    +int countWordsBelowThisNode(Node *node) const
+    +void clear()
+}
+Trie+--Node : 1 to many or 1 to n relationship since Trie is an aggregate of Nodes
+class Node{
+    Node* children_[26];
+    Node* parent_;
+    bool is_word_here_;
+    char value_;
+    std::string lineage_;
+    Node()
+    Node(char value, Node* parent, bool is_terminal, std::string lineage)
+}
+
+class NASIS{
+    Node* last_active_node_;
+    Node* last_important_node_;
+    unsigned long string_index_;
+    std::string original_word_;
+    NASIS()
+    NASIS(Node* node, int string_index)
+}
+Trie+--NASIS : helper class
+
+
+class IllegalException{
+    __private__
+    -std::string message_{"illegal argument"};
+    __public__
+    +IllegalException(std::string message)
+    +IllegalException()
+    +const char *what() const noexcept
+}
+Trie---IllegalException : Trie throws IllegalException 
+
+@enduml
