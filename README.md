@@ -5,6 +5,7 @@ This repository contains C++ implementations of common data structures and algor
 ## Contents
 
 ### Project 1
+![](https://github.com/CheeksTheGeek/DataStructuresAndAlgorithmsInCpp/blob/main/Project%201/Calculator.png?raw=true)
 
 Implementation of a simple calculator using a linked list data structure. The program consists of two major classes - `VarDataNode` and `CalcLinkedList`.
 
@@ -13,6 +14,7 @@ Implementation of a simple calculator using a linked list data structure. The pr
 - `main.cpp`: Calculator program driver
 
 ### Project 2  
+![](https://github.com/CheeksTheGeek/DataStructuresAndAlgorithmsInCpp/blob/main/Project%202/PageTable.png?raw=true)
 
 Implementation of a hashed page table using separate chaining and open addressing. The page table stores `Process` objects and maps virtual page numbers to physical frame numbers.
 
@@ -23,6 +25,7 @@ Implementation of a hashed page table using separate chaining and open addressin
 - `main.cpp`: Driver to test page table
 
 ### Project 3
+![](https://github.com/CheeksTheGeek/DataStructuresAndAlgorithmsInCpp/blob/main/Project%203/PrefixTrie.png?raw=true)
 
 Implementation of a prefix tree (trie) to store and search for words. The `Trie` class contains nested `Node` and `Iterator` classes.
 
@@ -30,6 +33,7 @@ Implementation of a prefix tree (trie) to store and search for words. The `Trie`
 - `main.cpp`: Driver to test trie functions
 
 ### Project 4
+![](https://github.com/CheeksTheGeek/DataStructuresAndAlgorithmsInCpp/blob/main/Project%204/PowerGridGraph.png?raw=true)
 
 Implementation of Prim's algorithm to find minimum spanning tree of a graph. Uses a priority queue to store graph edges.
 
