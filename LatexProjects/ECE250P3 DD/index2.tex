@@ -1,0 +1,84 @@
+\documentclass[a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{draculatheme} % or any other color theme package
+
+\usepackage{graphicx}
+
+\usepackage{color}
+
+\usepackage{nopageno}
+
+\usepackage{fontawesome}
+
+\usepackage{listings}
+
+\usepackage[export]{adjustbox}
+
+\usepackage[fontsize=8pt]{fontsize}
+
+\usepackage[a4paper, total={7.8in, 11.5in}]{geometry}
+
+\graphicspath{{./images/}}
+
+\title{Project ## Submission}
+
+\author{Your Name}
+
+\date{\today}
+
+\makeatletter
+
+\renewenvironment{abstract}{%
+\if@twocolumn
+\section*{\abstractname}%
+\else
+\begin{center}%
+{\bfseries \Large\abstractname\vspace{\z@}}
+
+\end{center}%
+\quotation
+\fi}
+{\if@twocolumn\else\endquotation\fi}
+
+\makeatother
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Abstract content goes here.
+\end{abstract}
+
+\section{Introduction}
+Introductory content goes here.
+
+\section{Class Structure}
+
+\subsection{Class 1}
+Details about class 1 go here.
+
+\subsubsection{Member Function 1}
+Details about member function 1 go here.
+
+\subsubsection{Member Function 2}
+Details about member function 2 go here.
+
+\subsection{Class 2}
+Details about class 2 go here.
+
+\section{Driver Code}
+Details about driver code go here.
+
+\section{Analysis}
+Analysis of runtime complexity, correctness, etc. goes here.
+
+\section{Testing}
+Details about testing methodology go here.
+
+\section{Conclusion}
+Concluding remarks go here.
+
+\end{document}

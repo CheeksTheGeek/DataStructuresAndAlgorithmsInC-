@@ -1,0 +1,23 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Tectonic Build PDF",
+            "type": "shell",
+            "command": "tectonic -X build",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Tectonic Compile PDF With Shell Escape",
+            "type": "shell",
+            "command": "cp index.tex tempFile.tex && cat _postamble.tex index.tex _preamble.tex > tempFile.tex && tectonic -X compile -Z shell-escape tempFile.tex && rm tempFile.tex",
+
+        }
+    ]
+}
